@@ -40,6 +40,15 @@
       @apply --ppaer-font-body1;
       color: var(--secondary-text-color);
     }
+
+    .positive {
+      color: #1fef5a;
+    }
+
+    .negative {
+      color: red;
+    }
+
     .score {
       font-size: 2rem;
       margin: 0;
@@ -75,7 +84,11 @@
           <span>
             [[player1.displayName]]
           </span>
-          <i class="rating">[[player1.rating]]</i>
+          <div class="row">
+            <del class="rating">[[match.ratings.player1Prev]]</del>
+            <i class$="[[player1Color]]">({{_calcPlayer1Diff(match)}})</i>
+            <b class="rating">[[match.ratings.player1New]]</b>
+          </div>
         </div>
         <p class="score">[[match.scores.player1]]</p>
       </div>
@@ -85,7 +98,11 @@
           <span>
             [[player2.displayName]]
           </span>
-          <i class="rating">[[player2.rating]]</i>
+          <div class="row">
+            <del class="rating">[[match.ratings.player2Prev]]</del>
+           <i class$="[[player2Color]]">({{_calcPlayer2Diff(match)}})</i>
+            <b class="rating">[[match.ratings.player2New]]</b>
+          </div>
         </div>
         <span class="score">[[match.scores.player2]]</span>
       </div>
@@ -96,8 +113,39 @@
       static get is() { return 'match-item'; }
       static get properties() {
         return {
-          match: Object
+          match: Object, 
+          player1Color: {
+            type: String,
+            computed: '_applyColor(player1Diff)'
+          },
+          player1Diff: {
+            type: Number,
+            computed: '_calcPlayer1Diff(match)'
+          },
+          player2Color: {
+            type: String,
+            computed: '_applyColor(player2Diff)'
+          },
+          player2Diff: {
+            type: Number,
+            computed: '_calcPlayer2Diff(match)'
+          }
         };
+      }
+
+      _calcPlayer1Diff(match) {
+        return match.ratings.player1New - match.ratings.player1Prev;;
+      }
+
+      _calcPlayer2Diff(match) {
+        return match.ratings.player2New - match.ratings.player2Prev;
+      }
+
+      _applyColor(diff) {
+        if(diff > 0)
+          return "positive";
+        else
+          return "negative";
       }
     }
 
